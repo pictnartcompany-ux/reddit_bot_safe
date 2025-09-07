@@ -1,0 +1,27 @@
+name: reddit-bot
+on:
+  schedule:
+    - cron: "8 7,12,18,20 * * *"   # UTC → ajuste selon Europe/Brussels
+  workflow_dispatch: {}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install praw
+      - name: Run oneshot
+        env:
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
+          REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
+          REDDIT_USER_AGENT: "LoufiArtBot/1.0 by u/${{ secrets.REDDIT_USERNAME }}"
+          REDDIT_SUBREDDITS: "art,ArtistLounge"
+          SITE_URL: "https://louphi1987.github.io/Site_de_Louphi/"
+          OPENSEA_URL: "https://opensea.io/collection/loufis-art"
+          ASSETS_DIR: "./assets/posts"
+        run: python reddit_bot_safe.py --oneshot
